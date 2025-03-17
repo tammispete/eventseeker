@@ -8,11 +8,7 @@ def eventseekerMain():
 
 
 def getgigs_from_tikettiFI():
-    """go to tiketti.fi, filter dates, screenshot, send email"""
-    """slowed browser down to see whats happening"""
-    browser.configure(
-        slowmo=500,
-    )
+    """go to tiketti.fi, filter dates, screenshot, send email"""    
     """open tiketti.fi"""
     browser.goto("https://www.tiketti.fi/")
     """get browserfuctions for this page"""
@@ -24,30 +20,40 @@ def getgigs_from_tikettiFI():
     page.click("span:text('Haku')")
     """click on calendar next month"""
     page.click(".fa.fa-angle-right")
-    """click on calendar 1 day, then click on down arrow to open the calendar again"""
-    page.click("//td[text()='1']")
-    locator = page.locator(".fa.fa-caret-down").nth(0)
-    locator.wait_for(state="visible")  # Wait for the element to be visible
-    locator.click()
-    """Does an IF-statement to find the last date of the month, then Click on the calendar last date"""
-    # Try to click the last date in the month, starting from 31, 30, 29, 28
-    try:
-        page.click("//td[text()='31']")  # Try to click 31
-    except:
-        try:
-            page.click("//td[text()='30']")  # If 31 doesn't exist, try 30
-        except:
-            try:
-                page.click("//td[text()='29']")  # If 30 doesn't exist, try 29
-            except:
-                page.click("//td[text()='28']")  # If 29 doesn't exist, try 28
+    """click on calendar 1 day"""   
+    page.wait_for_timeout(5000) 
+    page.click("//td[text()='1']")    
     """select city Helsinki"""
+    page.wait_for_timeout(5000)
     page.click('#event-search-city-select i.fa.fa-caret-right') #open the city selector
     page.click('#city\\|Helsinki')
-    """select category music"""
+    """select category music"""    
     page.click('#event-search-category-select i.fa.fa-caret-right')
-    page.click("#tag\\|0\\|1")
-    """"""
+    page.wait_for_selector("//li[text()='Musiikki']", state='visible')
+    page.click("//li[text()='Musiikki']")
+    """select genre punk hardcore"""
+    page.wait_for_timeout(5000)
+    page.click('#event-search-genre-select')
+    page.click("//li[text()='Punk/Hardcore']") #Filters for <li> elements whose text content is exactly "Punk/Hardcore".
+
+    """After filters, take screenshot of the results"""      
+    # Ensure the page is fully loaded
+    page.wait_for_load_state('load')
+    page.wait_for_timeout(5000)
+    page.screenshot(path="output/tiketti_results.png", full_page=True)
+
+
+
+
+
+
+
+
+
+    
+
+
+
 
 
 
