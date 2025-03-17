@@ -30,36 +30,36 @@ def getgigs_from_tikettiFI():
     """click on calendar next month"""
     page.click(".fa.fa-angle-right")
     """click on calendar 1 day"""   
-    page.wait_for_timeout(5000) 
+    page.wait_for_timeout(5000) #wait for 5 seconds, issue with page loading
     page.click("//td[text()='1']")   
 
     """select city Helsinki"""
-    page.wait_for_timeout(5000)
+    page.wait_for_timeout(5000) #wait for 5 seconds, issue with page loading
     page.click('#event-search-city-select i.fa.fa-caret-right') #open the city selector
     page.click('#city\\|Helsinki')
 
     """select category music"""    
     page.click('#event-search-category-select i.fa.fa-caret-right')
-    page.wait_for_selector("//li[text()='Musiikki']", state='visible')
+    page.wait_for_selector("//li[text()='Musiikki']", state='visible') #testing another way to wait for page loading, waiting for element
     page.click("//li[text()='Musiikki']")
 
     """select genre punk hardcore"""
-    page.wait_for_timeout(5000)
+    page.wait_for_timeout(5000) #wait for 5 seconds, issue with page loading
     page.click('#event-search-genre-select')
     page.click("//li[text()='Punk/Hardcore']") #Filters for <li> elements whose text content is exactly "Punk/Hardcore".
 
     """After filters, take screenshot of the results"""      
     # Ensure the page is fully loaded
-    page.wait_for_load_state('load')
-    page.wait_for_timeout(5000)
+    page.wait_for_load_state('load') #waiting for page, issues with loading
+    page.wait_for_timeout(5000) #wait for 5 seconds, issue with page loading
     page.screenshot(path="output/tiketti_results.png", full_page=True)
 
 def send_email():
     #load environment variables from .env file
     load_dotenv()
 
-    """get email credentials from environment variable"""
-    SENDER_EMAIL = os.getenv("EMAIL_USER") #username
+    """get email credentials from env"""
+    SENDER_EMAIL = os.getenv("EMAIL_USER") #email used
     SENDER_PASSWORD = os.getenv("EMAIL_PASSWORD")
     RECEIVER_EMAIL = "tamminen.petteri@gmail.com"
 
