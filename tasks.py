@@ -61,7 +61,7 @@ def send_email():
     """get email credentials from environment variable"""
     SENDER_EMAIL = os.getenv("EMAIL_USER") #username
     SENDER_PASSWORD = os.getenv("EMAIL_PASSWORD")
-    RECEIVER_EMAIL = "tamminen.petteri@gmail.com"
+    RECEIVER_EMAIL = os.getenv("RECEIVER_EMAIL")
 
     """check if credentials are available"""
     if not SENDER_EMAIL or not SENDER_PASSWORD:
