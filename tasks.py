@@ -21,7 +21,7 @@ def getgigs_from_metelinet():
     end_date = last_day_next_month.strftime("%Y-%-m-%-d")
 
     url = f"https://www.meteli.net/tapahtumahaku?g=punk%2Fhardcore&l=70&a={start_date}-{end_date}"
-    driver = webdriver.Safari()
+    driver = webdriver.Chrome()
 
     driver.get(url)
 
