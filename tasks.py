@@ -66,8 +66,7 @@ def getgigs_from_lippuFI():
     page.click("#categories")
     
     # Select "Keikat ja konsertit"
-    page.click("[data-qa='nav-cat-46']")
-    page.wait_for_load_state("networkidle")
+    page.click("[data-qa='nav-cat-46']")    
     page.wait_for_timeout(1000)
     
     # Apply "Punk ja hardcore" filter    
