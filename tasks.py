@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 def eventseekerMain():
     """main task, I put under here tasks getgigs_from_tikettiFI()"""
     getgigs_from_tikettiFI()
+    getgigs_from_lippuFI()
     send_email()
 
 
@@ -20,7 +21,7 @@ def getgigs_from_tikettiFI():
     """get browserfuctions for this page"""
     page = browser.page()
 
-    """get rid of cookie consent, waits for popup to appead and then clicks on the decline button"""
+    """accept consent, waits for popup to appead and then clicks on the accept button"""
     page.wait_for_selector("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll", state="visible", timeout=10000)  # Waits up to 10s
     page.click("#CybotCookiebotDialogBodyLevelButtonLevelOptinAllowAll")
 
@@ -56,6 +57,10 @@ def getgigs_from_tikettiFI():
 
 def getgigs_from_lippuFI():
     page = browser.goto("https://www.lippu.fi")
+
+    """accept cookie consent, waits for popup to appead and then clicks on the accept button"""
+    page.wait_for_selector("#cmpwelcomebtnyes", state="visible", timeout=10000)  # Waits up to 10s
+    page.click("#cmpwelcomebtnyes")
     
     # Click "Kategoriat"
     page.click("#categories")
@@ -78,7 +83,9 @@ def getgigs_from_lippuFI():
     page_num = 1
     
     while True:
-        screenshot_path = f"output/page_{page_num}.png"
+        screenshot_path = f"output/page_{page_num}.png" 
+        page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(1000)
         page.screenshot(path=screenshot_path)
         screenshots.append(screenshot_path)
         
