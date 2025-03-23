@@ -5,12 +5,15 @@ import ssl
 import os
 from email.message import EmailMessage
 from dotenv import load_dotenv
+from datetime import datetime, timedelta
+import os
 
 @task
 def eventseekerMain():
     """main task, I put under here tasks getgigs_from_tikettiFI()"""
     getgigs_from_tikettiFI()
     getgigs_from_lippuFI()
+    getgigs_from_metelinet()
     send_email()
 
 
@@ -97,7 +100,41 @@ def getgigs_from_lippuFI():
             page_num += 1
         else:
             break
-      # Return the list of screenshots
+
+def getgigs_from_metelinet():
+    today = datetime.today()
+    first_day_next_month = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
+    first_day_after_next_month = (first_day_next_month.replace(day=1) + timedelta(days=32)).replace(day=1)
+    last_day_next_month = first_day_after_next_month - timedelta(days=1)
+    start_date = first_day_next_month.strftime("%Y-%#m-%#d")
+    end_date = last_day_next_month.strftime("%Y-%#m-%#d") 
+
+    url = f"https://www.meteli.net/tapahtumahaku?g=punk%2Fhardcore&l=70&a={start_date}-{end_date}"
+    page = browser.goto(url)
+    
+    # Accept cookies if button exists
+    consent_button = page.query_selector(".fc-button.fc-cta-consent.fc-primary-button")
+    if consent_button:
+        consent_button.click()
+    
+    page.wait_for_timeout(1000)
+    
+    screenshots = []
+    page_num = 1
+    
+    while True:
+        screenshot_path = f"output/meteli_{page_num}.png"
+        page.screenshot(path=screenshot_path, full_page=True)
+        screenshots.append(screenshot_path)
+        
+        # Check if there is a next page button inside an <a> tag (clickable)
+        next_button = page.query_selector("a:has-text('Seuraava')")
+        if next_button:
+            next_button.click()
+            page.wait_for_timeout(1000)
+            page_num += 1
+        else:
+            break
     
 
 def send_email():
@@ -122,13 +159,15 @@ def send_email():
     msg.set_content("Here is the screenshots of gigs")
 
     """Attach screenshot to email"""
-    # Attach first screenshot
-    with open("output/tiketti_results.png", "rb") as file:
-        msg.add_attachment(file.read(), maintype="image", subtype="png", filename="tiketti_results.png")
+    # Get all PNG files from the "output" folder
+    output_folder = "output"
+    attachments = [f for f in os.listdir(output_folder) if f.endswith(".png")]
 
-    # Attach second screenshot    
-    with open("output/page_1.png", "rb") as file:
-        msg.add_attachment(file.read(), maintype="image", subtype="png", filename="page_1.png")
+    # Attach all PNG files dynamically
+    for file_name in attachments:
+        file_path = os.path.join(output_folder, file_name)
+        with open(file_path, "rb") as file:
+            msg.add_attachment(file.read(), maintype="image", subtype="png", filename=file_name)
 
     """Send email"""
     context = ssl.create_default_context()
