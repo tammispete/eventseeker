@@ -54,6 +54,44 @@ def getgigs_from_tikettiFI():
     page.wait_for_timeout(5000) #wait for 5 seconds, issue with page loading
     page.screenshot(path="output/tiketti_results.png", full_page=True)
 
+def getgigs_from_lippuFI():
+    page = browser.goto("https://www.lippu.fi")
+    
+    # Click "Kategoriat"
+    page.click("#categories")
+    
+    # Select "Keikat ja konsertit"
+    page.click("[data-qa='nav-cat-46']")
+    page.wait_for_load_state("networkidle")
+    
+    # Apply "Punk ja hardcore" filter
+    page.click("[data-qa='category-filter']")
+    page.click("a[title='Punk ja hardcore']")
+    page.wait_for_load_state("networkidle")
+    
+    # Select "Alkaen" -> "Next month"
+    page.click("#datepicker-from")
+    page.click("[data-qa='datepicker-quick-link-6']")
+    page.wait_for_load_state("networkidle")
+    
+    screenshots = []
+    page_num = 1
+    
+    while True:
+        screenshot_path = f"output/page_{page_num}.png"
+        page.screenshot(path=screenshot_path)
+        screenshots.append(screenshot_path)
+        
+        # Check if there is a next page button inside an <a> tag (clickable)
+        next_button = page.query_selector("a[data-qa='nextPage']")
+        if next_button:
+            next_button.click()
+            page.wait_for_load_state("networkidle")
+            page_num += 1
+        else:
+            break
+    
+
 def send_email():
     #load environment variables from .env file
     load_dotenv()
