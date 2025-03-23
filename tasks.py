@@ -59,8 +59,8 @@ def getgigs_from_lippuFI():
     page = browser.goto("https://www.lippu.fi")
 
     """accept cookie consent, waits for popup to appead and then clicks on the accept button"""
-    page.wait_for_selector("#cmpwelcomebtnyes", state="visible", timeout=10000)  # Waits up to 10s
-    page.click("#cmpwelcomebtnyes")
+    page.wait_for_selector("#cmpwelcomebtnno", state="visible", timeout=10000)  # Waits up to 10s
+    page.click("#cmpwelcomebtnno")
     
     # Click "Kategoriat"
     page.click("#categories")
@@ -68,8 +68,9 @@ def getgigs_from_lippuFI():
     # Select "Keikat ja konsertit"
     page.click("[data-qa='nav-cat-46']")
     page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(1000)
     
-    # Apply "Punk ja hardcore" filter
+    # Apply "Punk ja hardcore" filter    
     page.click("[data-qa='category-filter']")
     page.click("a[title='Punk ja hardcore']")
     page.wait_for_load_state("networkidle")
@@ -97,6 +98,7 @@ def getgigs_from_lippuFI():
             page_num += 1
         else:
             break
+      # Return the list of screenshots
     
 
 def send_email():
@@ -121,8 +123,13 @@ def send_email():
     msg.set_content("Here is the screenshots of gigs")
 
     """Attach screenshot to email"""
+    # Attach first screenshot
     with open("output/tiketti_results.png", "rb") as file:
         msg.add_attachment(file.read(), maintype="image", subtype="png", filename="tiketti_results.png")
+
+    # Attach second screenshot    
+    with open("output/page_1.png", "rb") as file:
+        msg.add_attachment(file.read(), maintype="image", subtype="png", filename="page_1.png")
 
     """Send email"""
     context = ssl.create_default_context()
