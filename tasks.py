@@ -76,11 +76,13 @@ def getgigs_from_lippuFI():
     page.click("[data-qa='category-filter']")
     page.click("a[title='Punk ja hardcore']")
     page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(1000)
     
     # Select "Alkaen" -> "Next month"
     page.click("#datepicker-from")
     page.click("[data-qa='datepicker-quick-link-6']")
     page.wait_for_load_state("networkidle")
+    page.wait_for_timeout(1000)
     
     screenshots = []
     page_num = 1
@@ -102,12 +104,15 @@ def getgigs_from_lippuFI():
             break
 
 def getgigs_from_metelinet():
+    """get correct dates"""
     today = datetime.today()
     first_day_next_month = (today.replace(day=1) + timedelta(days=32)).replace(day=1)
     first_day_after_next_month = (first_day_next_month.replace(day=1) + timedelta(days=32)).replace(day=1)
     last_day_next_month = first_day_after_next_month - timedelta(days=1)
     start_date = first_day_next_month.strftime("%Y-%#m-%#d")
     end_date = last_day_next_month.strftime("%Y-%#m-%#d") 
+
+    """add dates to the URL"""
 
     url = f"https://www.meteli.net/tapahtumahaku?g=punk%2Fhardcore&l=70&a={start_date}-{end_date}"
     page = browser.goto(url)
@@ -118,6 +123,8 @@ def getgigs_from_metelinet():
         consent_button.click()
     
     page.wait_for_timeout(1000)
+
+    """Take screenshots with While loop for all pages"""
     
     screenshots = []
     page_num = 1
@@ -139,7 +146,7 @@ def getgigs_from_metelinet():
 
 def send_email():
     #load environment variables from .env file
-    load_dotenv()
+    load_dotenv()    
 
     """get email credentials from env"""
     SENDER_EMAIL = os.getenv("EMAIL_USER") #email used
